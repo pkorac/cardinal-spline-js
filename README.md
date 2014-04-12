@@ -15,8 +15,9 @@ The method is highly optimized for use in performance critical situations.
 
 **Example**
 
-    ctx.moveTo(points[0], points[1]);
-    ctx.curve(points);
+    ctx.moveTo(points[0], points[1]);  // optionally move to first point
+    ctx.curve(points);                 // add cardinal spline to path
+    ctx.stroke();                      // rasterize path
 
 will draw the points in the array which is arranged in this manner:
 
