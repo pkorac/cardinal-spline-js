@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+
+<!-- *******************************************************************
+	 **	    Cardinal spline for canvas extension demo.
+	 **
+	 **	    (c) Epistemex (www.epistemex.com).
+	 ** 	License: MIT. May be used in any project.
+	 *******************************************************************
+-->
+<head>
+	<title>Canvas cardinal (smooth) curve extension - Epistemex</title>
+
+	<style>
+		body {
+			width:100%;
+			padding:0;
+			margin:0;
+			font:16px sans-serif;
+			color:#ccd;
+			background-color:#333;
+			}
+		h1 {
+			font-size:40px;
+			font-weight: normal;
+			margin:20px 0;
+			color:#fff;
+			}
+		#container {
+			width:800px;
+			margin:0 auto;
+			}
+		#demoCanvas {
+			background-color: rgb(187, 187, 187);
+			}
+		.options {
+			font-size:12px;
+			padding:7px 5px 8px 5px;
+			background-color:#555;
+			color:#fff;
+			width:790px;
+			margin:0;
+			}
+		.options>input[type=text] {
+			width:30px;
+			margin-left:5px;
+			text-align:center;
+			border:1px solid #fff;
+			}
+		button {
+			border:0;
+			background: rgb(187, 200, 248);
+			color:#000;
+			padding:5px 9px 4px 9px;
+			float:right;
+			margin:0 4px 0 0;
+			}
+		.options>label {
+			margin-left:12px;
+			}
+		a {
+			color:#fff;
+			text-decoration: none;
+			}
+		a:hover {
+			color:#ffa;
+			text-decoration: underline;
+			}
+	</style>
+</head>
+<body>
+
+	<div id="container">
+
+		<h1>Smooth curves on canvas</h1>
+
+		<p>Draw smooth curves (cardinal splines) through points without any control points or calculated pseudo-points.</p>
+
+		<!-- Option panel -->
+		<div class="options">
+			<label for="numTension">Tension:</label>
+			<input id="numTension" type="text" value="0.5" maxlength="4" autofocus onkeyup="drawCurveDemo()" />
+
+			<label for="numSegments">Segments:</label>
+			<input id="numSegments" type="text" value="20" maxlength="2" onkeyup="drawCurveDemo()" />
+
+			<label for="chkRandHori">Randomize horizontally:</label>
+			<input id="chkRandHori" type="checkbox" checked>
+
+			<button onclick="randomize();drawCurveDemo()">Randomize</button>
+		</div>
+
+		<!-- Lets define a canvas-->
+		<canvas id="demoCanvas" width="800" height="400"></canvas>
+
+		<p>&copy; by <a href="http://github.com/epistemex/">Epistemex</a>. License: MIT.</p>
+	</div>
+
+<script src="../curve.min.js"></script>
+<script>
+
+	var	canvas = document.getElementById('demoCanvas'),
+		ctx = canvas.getContext("2d"),
+		w = canvas.width,
+		h = canvas.height,
+		pts = [];
+
+	ctx.lineJoin = 'round';
+
+	randomize();
+	drawCurveDemo();
+
+	/*
+	 *	Randomize points
+	*/
+	function randomize() {
+
+		var numOfPoints = 20; //min. 2
+		var st = w / (numOfPoints - 1);
+		var horizontal = document.getElementById('chkRandHori').checked;
+
+		pts = [];
+
+		for(var i = 0; i < numOfPoints; i++) {
+			horizontal ? pts.push((i * st) |0) : pts.push((w * Math.random() * 0.9 + w * 0.05) |0);
+			pts.push((h * Math.random() * 0.9 + h * 0.05) |0);
+		}
+	}
+
+	/*
+	 *	Collect options
+	 */
+	function CurveOptions() {
+
+		var seg = parseFloat(document.getElementById('numSegments').value);
+		if (isNaN(seg)) seg = 1;
+		if (seg < 1) seg = 1;
+		if (seg > 99) seg = 99;
+
+		var tension = parseFloat(document.getElementById('numTension').value);
+		if (isNaN(tension)) tension = 0;
+		if (tension < -9) tension = -9;
+		if (tension > 9) tension = 9;
+
+		this.segments = seg;
+		this.tension = tension;
+
+		return this;
+	}
+
+	/*
+	 *	Draw curve with current settings and points
+	 */
+	function drawCurveDemo() {
+
+		ctx.clearRect(0, 0, w, h);
+
+		// get current options
+		var o = new CurveOptions();
+
+		// draw our cardinal spline
+		ctx.beginPath();
+		ctx.moveTo(pts[0], pts[1]);
+		ctx.curve(pts, o.tension, o.segments);
+		ctx.strokeStyle = '#6677cc';
+		ctx.lineWidth = 3;
+		ctx.stroke();
+
+		// show original points
+		ctx.strokeStyle = 'rgba(255,255,255,0.7)';
+		ctx.lineWidth = 1;
+
+		for(var i = 0; i < pts.length; i += 2) {
+			ctx.strokeRect(pts[i] - 1.5, pts[i+1] - 1.5, 4, 4);
+		}
+	}
+
+</script>
+</body>
+</html>
