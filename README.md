@@ -15,6 +15,7 @@ The method is highly optimized for use in performance critical situations.
 
 **Example**
 
+    ctx.moveTo(points[0], points[1]);
     ctx.curve(points);
 
 will draw the points in the array which is arranged in this manner:
@@ -27,7 +28,12 @@ Optionally a tension value can be given:
 
 as well as a segment resolution value:
 
-    ctx.curve(points, 0.5, 16);
+    ctx.curve(points, 0.5, 20);
+
+The methods returns an array with the spline points which can be used for
+tracking and so forth:
+
+    var splinePoints = ctx.curve(points);
 
 License
 -------
