@@ -49,8 +49,7 @@ tracking, calculate length and so forth:
 License
 -------
 
-This library is released under MIT license and can be used in both
-commercial and non-commercial projects as long as the header is included.
+Released under [MIT license](http://choosealicense.com/licenses/mit/). You can use this class in both commercial and non-commercial projects provided that full header (minified and developer versions) is included.
 
 *&copy; 2013-2014 Epistmex*
 
