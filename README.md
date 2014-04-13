@@ -54,4 +54,4 @@ commercial and non-commercial projects as long as the header is included.
 
 &copy; Epistemex 2013-2014
 
-![Epistemex](http://i.imgur.com/ly6MstJ.png)
+![Epistemex](http://i.imgur.com/uzOTLjV.png)
