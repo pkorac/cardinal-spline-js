@@ -1,4 +1,4 @@
-/*!	Curve extension for canvas 2.0
+/*!	Curve extension for canvas 2.1
  *	Epistemex (c) 2013-2014
  *	License: MIT
 */
@@ -15,33 +15,41 @@
  * @param {Array} points - point array
  * @param {Number} [tension=0.5] - tension. Typically between [0.0, 1.0] but can be exceeded
  * @param {Number} [numOfSeg=20] - number of segments between two points (line resolution)
+ * @param {Boolean} [close=false] - Close the ends making the line continuous
  * @returns {Array} New array with the calculated points that was added to the path
  */
-CanvasRenderingContext2D.prototype.curve = function(points, tension, numOfSeg) {
+CanvasRenderingContext2D.prototype.curve = function(points, tension, numOfSeg, close) {
+
+	'use strict';
 
 	// options or defaults
 	tension = (typeof tension === 'number') ? tension : 0.5;
 	numOfSeg = numOfSeg ? numOfSeg : 20;
 
 	var pts,					// clone point array
-		res = [],				// result with spline points
-		l = points.length,
-		t, i,
+		res = [],
+		l = points.length, i,
 		cache = [];
 
-	pts = points.slice(0);
+	pts = points.slice(0);		// TODO check if pre-push then concat is faster instead of slice and unshift
 
-	pts.unshift(points[1]);		// copy 1. point and insert at beginning
-	pts.unshift(points[0]);		// TODO check if pre-push then concat is faster instead of slice and unshift
-
-	pts.push(points[l - 2], points[l - 1]);	// duplicate end-points
+	if (close) {
+		pts.unshift(points[l - 1]); // insert end point as first point
+		pts.unshift(points[l - 2]);
+		pts.push(points[0], points[1]); // first point as last point
+	}
+	else {
+		pts.unshift(points[1]);	// copy 1. point and insert at beginning
+		pts.unshift(points[0]);
+		pts.push(points[l - 2], points[l - 1]);	// duplicate end-points
+	}
 
 	// cache inner-loop calculations as they are based on t alone
 	cache.push([1, 0, 0, 0]);
 
-	for (t = 1; t < numOfSeg; t++) {
+	for (i = 1; i < numOfSeg; i++) {
 
-		var st = t / numOfSeg,
+		var st = i / numOfSeg,
 			st2 = st * st,
 			st3 = st2 * st,
 			st23 = st3 * 2,
@@ -58,24 +66,37 @@ CanvasRenderingContext2D.prototype.curve = function(points, tension, numOfSeg) {
 	cache.push([0, 1, 0, 0]);
 
 	// calc. points
-	for (i = 2; i < l; i += 2) {
+	parse(pts, cache);
 
-		var pt1 = pts[i],
-			pt2 = pts[i+1],
-			pt3 = pts[i+2],
-			pt4 = pts[i+3],
+	if (close) {
+		//l = points.length;
+		pts = [];
+		pts.push(points[l - 4], points[l - 3], points[l - 2], points[l - 1]); // second last and last
+		pts.push(points[0], points[1], points[2], points[3]); // first and second
+		parse(pts, cache);
+	}
 
-			t1x = (pt3 - pts[i-2]) * tension,
-			t1y = (pt4 - pts[i-1]) * tension,
-			t2x = (pts[i+4] - pt1) * tension,
-			t2y = (pts[i+5] - pt2) * tension;
+	function parse(pts, cache) {
 
-		for (t = 0; t <= numOfSeg; t++) {
+		for (var i = 2; i <= l; i += 2) {
 
-			var c = cache[t];
+			var pt1 = pts[i],
+				pt2 = pts[i+1],
+				pt3 = pts[i+2],
+				pt4 = pts[i+3],
 
-			res.push(c[0] * pt1 + c[1] * pt3 + c[2] * t1x + c[3] * t2x,
-					 c[0] * pt2 + c[1] * pt4 + c[2] * t1y + c[3] * t2y);
+				t1x = (pt3 - pts[i-2]) * tension,
+				t1y = (pt4 - pts[i-1]) * tension,
+				t2x = (pts[i+4] - pt1) * tension,
+				t2y = (pts[i+5] - pt2) * tension;
+
+			for (var t = 0; t <= numOfSeg; t++) {
+
+				var c = cache[t];
+
+				res.push(c[0] * pt1 + c[1] * pt3 + c[2] * t1x + c[3] * t2x,
+						 c[0] * pt2 + c[1] * pt4 + c[2] * t1y + c[3] * t2y);
+			}
 		}
 	}
 

@@ -1,0 +1,21 @@
+Change log for curve.js
+-----------------------
+
+2.1
+
+ADD: New option: closed loop
+FIX: End point wasn't properly considered
+
+2.0
+
+New re-release of smooth line. Original can be found here:
+http://www.codeproject.com/Tips/562175/Draw-Smooth-Line-through-points-with-HTML-Canvas
+
+ADD: Optimized inner loop with a caching step
+CHG: Removed redundant code
+CHG: Cleaned up var declarations
+CHG: Removed internal moveTo() to conform better to context behavior in general
+
+
+(c) Epistemex 2013-2014
+License: MIT
