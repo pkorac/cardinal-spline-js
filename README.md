@@ -52,6 +52,6 @@ License
 This library is released under MIT license and can be used in both
 commercial and non-commercial projects as long as the header is included.
 
-&copy; Epistemex 2013-2014
+*&copy; 2013-2014 Epistmex*
 
 ![Epistemex](http://i.imgur.com/uzOTLjV.png)
