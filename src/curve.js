@@ -1,4 +1,4 @@
-/*!	Curve extension for canvas 2.1
+/*!	Curve extension for canvas 2.1.1
  *	Epistemex (c) 2013-2014
  *	License: MIT
 */
@@ -66,19 +66,19 @@ CanvasRenderingContext2D.prototype.curve = function(points, tension, numOfSeg, c
 	cache.push([0, 1, 0, 0]);
 
 	// calc. points
-	parse(pts, cache);
+	parse(pts, cache, l);
 
 	if (close) {
 		//l = points.length;
 		pts = [];
 		pts.push(points[l - 4], points[l - 3], points[l - 2], points[l - 1]); // second last and last
 		pts.push(points[0], points[1], points[2], points[3]); // first and second
-		parse(pts, cache);
+		parse(pts, cache, 4);
 	}
 
-	function parse(pts, cache) {
+	function parse(pts, cache, l) {
 
-		for (var i = 2; i <= l; i += 2) {
+		for (var i = 2; i < l; i += 2) {
 
 			var pt1 = pts[i],
 				pt2 = pts[i+1],
@@ -103,6 +103,8 @@ CanvasRenderingContext2D.prototype.curve = function(points, tension, numOfSeg, c
 	// add lines to path
 	for(i = 0, l = res.length; i < l; i += 2)
 		this.lineTo(res[i], res[i+1]);
+
+	console.log(res);
 
 	return res;
 };

@@ -1,7 +1,7 @@
 ﻿Cardinal spline
 ===============
 
-An HTML5 Canvas extension (JavaScript).
+A `curve()` (cardinal spline) extension for HTML5 Canvas (JavaScript).
 
 This library extends the 2D context with a new optimized `curve()` method
 to enable drawing of cardinal splines - splines that goes through the defined

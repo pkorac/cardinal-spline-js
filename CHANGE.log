@@ -1,6 +1,10 @@
 Change log for curve.js
 -----------------------
 
+2.1.1
+
+FIX: When closed length of close array was still reflecting total length
+
 2.1
 
 ADD: New option: closed loop
