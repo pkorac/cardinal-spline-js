@@ -8,6 +8,7 @@
 	 ** 	License: MIT. May be used in any project.
 	 *******************************************************************
 -->
+
 <head>
 	<title>Canvas cardinal (smooth) curve extension - Epistemex</title>
 
@@ -16,15 +17,18 @@
 			width:100%;
 			padding:0;
 			margin:0;
-			font:16px sans-serif;
+			font:14px sans-serif;
 			color:#ccd;
-			background-color:#303030;
+			background-color:#272727;
 			}
 		h1 {
 			font-size:40px;
 			font-weight: normal;
 			margin:20px 0;
 			color:#fff;
+			}
+		p {
+			line-height: 19px;
 			}
 		#container {
 			width:800px;
@@ -79,9 +83,10 @@
 
 	<div id="container">
 
-		<h1>Smooth curves on canvas</h1>
+		<h1>Cardinal spline for canvas</h1>
 
-		<p>Draw smooth curves (cardinal splines) through points without any control points or calculated pseudo-points.</p>
+		<p>Draw a smooth curve (cardinal spline) through a point set with open or closed end, variable tension and number of segments.
+		The implementation is highly optimized for performance still preserving quality.</p>
 
 		<!-- Option panel -->
 		<div class="options">
@@ -89,7 +94,8 @@
 			<input id="numTension" type="text" value="0.5" maxlength="4" autofocus onkeyup="drawCurveDemo()" />
 
 			<label for="numSegments">Segments:</label>
-			<input id="numSegments" type="text" value="20" maxlength="2" onkeyup="drawCurveDemo()" />
+			<input id="numSegments" type="range" value="20" min=1 max=100 />
+			<span id="numSegmentsValue">20</span>
 
 			<label for="chkClosed">Closed:</label>
 			<input id="chkClosed" type="checkbox" checked onchange="drawCurveDemo()">
@@ -104,15 +110,21 @@
 
 		<div class="footerl">
 			&copy; by <a href="http://github.com/epistemex/">Epistemex</a>.
-			<a href="https://github.com/epistemex/cardinal-spline-js/tree/master">Cardinal spline</a> is licensed under MIT.
+			<a href="https://github.com/epistemex/cardinal-spline-js/">Cardinal spline</a> comes with a <a href="http://opensource.org/licenses/MIT">MIT license</a>.
 		</div>
 		<div class="footerr">
-			<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAAAWCAMAAAAVb5UIAAAAOVBMVEUAAACDg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4NfX1+KiopCQkKDg4M2NjZpSN/YAAAADXRSTlMAdD/FDy2VIIDsYd2sZzrnkwAAAYRJREFUSMftlGFvhCAMhlusRdRuy/7/jx1YS/WO6e6+nFnuTTQl5cWnUIGvtuCFSsIXxAp8SSyQSa6IBQEuiQWXxfpuy9LiCrtBSeU8i2mAIBvx4PFcnODSobhK7LnxLz/rOKiYQNYBzsuyqVAlZIo9Y1mNc27USRxRGFfnUlCCKh1Jh4MKATrjKhVnfbTlWLtfxKJB+gWrFunhJDaFNk7ufBNYxsWLnjeuoFSPYXnFKPEWa0ZztLAmn0o5cqwdV6iTzrGiqm/tVhIky8ItViB3Jv+kCCkWW56Mq1KdY1VBo7dAXHdYVWEtYdCvD+r1/KwOjZ7YLVdvR6oVE2aKw92y7ovl3dwtERbpcvBsy3unIYJpkqPeSkak9I3eKkj6Ole75X0k8gAWsOAko2PdUTmXtNU4xCaWtTyNB4dI5rSV/RC9P1ht64zPtn655ff1NVveAt7f8vvk/S0fNl88x4oqLamPDmUjq7iemN0V1FcnVWd0b358Qk+bdQMdYL1Sb6z/gPUDW4Y2qkc9f9AAAAAASUVORK5CYII=">
+			<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJcAAAAWBAMAAAA/XRM3AAAAJFBMVEUAAABZWVmJiYlvb29paWlhYWF2dnZzc3OHh4dnZ2d6enpgYGCUPxGhAAAAAXRSTlMAQObYZgAAAQhJREFUOMvl0jEOgjAUBuByg9cbGE5gwuDqgIMHYDcxYTZxYHVkZGDpBXT1iLbv/RVoGzGBwcSXtKQv4aP9i8rzfOOHWlKZpn/A1FoYan2sbdubG3zyUSmNNWk8MCMktDMtq0AOMLJcCpP33m12+AtFUWx3TXMx/bFzGAnpZsaIm2jJlkYYoYGNlWW5v1rQoSlMpTA5FzAcWM1jyCfESGZg6MQYUggyA4Yuybl8ZvyWmsNwmzGWabf22LAz06ePyeUz09NjkoQUZ1YY0z3sbTZ2fI3JVsLbDCvGyD1CTELy2PCfVVX1vNf1aZKZHrBkZg5iDAVxBsNafcbwDwfYsvpl7MDYeb8G9gLAP1qtX57IzAAAAABJRU5ErkJggg==">
 		</div>
 	</div>
 
 <script src="../curve.min.js"></script>
 <script>
+
+	/*
+	 Slider feedback 0.6
+	 By Ken Fyrstenberg
+	 */
+	(function(){var a=HTMLInputElement.prototype;a._LD=function(){this._DW=!0};a._LU=function(){this._DW=!1};a._LM=function(b){var d=this,c=d.value;if(d._DW&&d._OV!=c){d._LE();d._OV=c;if(d.onchange){setTimeout(function(){d.onchange(d._CE())},7)}}};a._LE=function(){this.dispatchEvent(this._CE())};a._CE=function(){var d,b="change";try{d=new Event(b)}catch(f){d=document.createEvent("Event");d.initEvent(b,!0,!0)}return d};a.feedback=function(f){var j=this,e="mouse",c="down",h="up",i="move";if(j.type=="range"){if(f==j._OMD){return}if(f){b(e+c,j._LD);b(e+i,j._LM);b(e+h,j._LU);setTimeout(function(){j._LE();if(j.onchange){j.onchange(null)}},9)}else{g(e+c,j._LD);g(e+i,j._LM);g(e+h,j._LU)}j._OMD=f}function b(k,d){j.addEventListener(k,d)}function g(k,d){j.removeEventListener(k,d)}}})();window.addEventListener("DOMContentLoaded",function(){for(var c=document.querySelectorAll("input[type=range]"),b=0,a;a=c[b++];){a.feedback(!0)}});
 
 	var	canvas = document.getElementById('demoCanvas'),
 		ctx = canvas.getContext("2d"),
@@ -125,6 +137,8 @@
 
 	randomize();
 	drawCurveDemo();
+
+	document.getElementById('numSegments').addEventListener('change', drawCurveDemo, false);
 
 	/*
 	 *	Randomize points
@@ -144,12 +158,12 @@
 	/*
 	 *	Collect options
 	 */
-	function CurveOptions() {
+	function curveOptions() {
 
 		var seg = parseFloat(document.getElementById('numSegments').value);
 		if (isNaN(seg)) seg = 1;
 		if (seg < 1) seg = 1;
-		if (seg > 99) seg = 99;
+		if (seg > 100) seg = 100;
 
 		var tension = parseFloat(document.getElementById('numTension').value);
 		if (isNaN(tension)) tension = 0;
@@ -171,7 +185,9 @@
 		ctx.clearRect(0, 0, w, h);
 
 		// get current options
-		var o = new CurveOptions();
+		var o = new curveOptions();
+
+		document.getElementById('numSegmentsValue').innerHTML = o.segments;
 
 		// draw our cardinal spline
 		ctx.beginPath();

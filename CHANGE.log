@@ -1,9 +1,14 @@
 Change log for curve.js
 -----------------------
 
+2.2
+
+IMP: Using typed arrays internally for cached tension values for speed improvement
+REM: A left over and unnecessary console.log removed
+
 2.1.1
 
-FIX: When closed length of close array was still reflecting total length
+FIX: When closed length of close array was still reflecting total length internally
 
 2.1
 

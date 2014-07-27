@@ -12,6 +12,12 @@ them at given or default tension and segment resolution, open or closed loop.
 
 ![Demo snapshot](http://i.imgur.com/5e69T5C.png)
 
+*Not to be confused with Bezier splines which uses end points and one 
+or two control points, whereas the line is drawn somewhere between. 
+With a cardinal spline the smooth curve goes through every point 
+defined and you can have as many point as you wish in a single spline.*
+
+
 Usage
 -----
 

@@ -1,4 +1,4 @@
-/*!	Curve extension for canvas 2.1.1
+/*!	Curve extension for canvas 2.2
  *	Epistemex (c) 2013-2014
  *	License: MIT
 */
@@ -29,9 +29,10 @@ CanvasRenderingContext2D.prototype.curve = function(points, tension, numOfSeg, c
 	var pts,					// clone point array
 		res = [],
 		l = points.length, i,
-		cache = [];
+		cache = new Float32Array((numOfSeg+2)*4),
+		cachePtr = 4;
 
-	pts = points.slice(0);		// TODO check if pre-push then concat is faster instead of slice and unshift
+	pts = points.slice(0);
 
 	if (close) {
 		pts.unshift(points[l - 1]); // insert end point as first point
@@ -45,7 +46,7 @@ CanvasRenderingContext2D.prototype.curve = function(points, tension, numOfSeg, c
 	}
 
 	// cache inner-loop calculations as they are based on t alone
-	cache.push([1, 0, 0, 0]);
+	cache[0] = 1;
 
 	for (i = 1; i < numOfSeg; i++) {
 
@@ -55,15 +56,13 @@ CanvasRenderingContext2D.prototype.curve = function(points, tension, numOfSeg, c
 			st23 = st3 * 2,
 			st32 = st2 * 3;
 
-		cache.push([
-			st23 - st32 + 1,	// c1
-			st32 - st23,		// c2
-			st3 - 2 * st2 + st,	// c3
-			st3 - st2			// c4
-		]);
+		cache[cachePtr++] =	st23 - st32 + 1;	// c1
+		cache[cachePtr++] =	st32 - st23;		// c2
+		cache[cachePtr++] =	st3 - 2 * st2 + st;	// c3
+		cache[cachePtr++] =	st3 - st2;			// c4
 	}
 
-	cache.push([0, 1, 0, 0]);
+	cache[++cachePtr] = 1;
 
 	// calc. points
 	parse(pts, cache, l);
@@ -92,10 +91,10 @@ CanvasRenderingContext2D.prototype.curve = function(points, tension, numOfSeg, c
 
 			for (var t = 0; t <= numOfSeg; t++) {
 
-				var c = cache[t];
+				var c = t * 4;
 
-				res.push(c[0] * pt1 + c[1] * pt3 + c[2] * t1x + c[3] * t2x,
-						 c[0] * pt2 + c[1] * pt4 + c[2] * t1y + c[3] * t2y);
+				res.push(cache[c] * pt1 + cache[c+1] * pt3 + cache[c+2] * t1x + cache[c+3] * t2x,
+						 cache[c] * pt2 + cache[c+1] * pt4 + cache[c+2] * t1y + cache[c+3] * t2y);
 			}
 		}
 	}
@@ -103,8 +102,6 @@ CanvasRenderingContext2D.prototype.curve = function(points, tension, numOfSeg, c
 	// add lines to path
 	for(i = 0, l = res.length; i < l; i += 2)
 		this.lineTo(res[i], res[i+1]);
-
-	console.log(res);
 
 	return res;
 };
