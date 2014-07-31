@@ -59,4 +59,4 @@ Released under [MIT license](http://choosealicense.com/licenses/mit/). You can u
 
 *&copy; 2013-2014 Epistemex*
 
-![Epistemex](http://i.imgur.com/NJpHOFr.png)
+![Epistemex](http://i.imgur.com/YxO8CtB.png)
